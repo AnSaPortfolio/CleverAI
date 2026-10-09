@@ -1,0 +1,170 @@
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  padding: 0 12px;
+  box-sizing: border-box;
+}
+
+.form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  width: 100%;
+  max-width: 720px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 8px 10px 8px 14px;
+  box-sizing: border-box;
+
+  background: #25282e;
+  border: 1px solid #3b3f46;
+  border-radius: 14px;
+
+  transition: border-color 0.2s ease;
+
+  &:focus-within {
+    border-color: #777d87;
+  }
+}
+
+.field {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+
+  background: none;
+  border: none;
+  outline: none;
+
+  color: #f5f5f5;
+  font-size: 12px;
+  font-family: inherit;
+
+  &::placeholder {
+    color: #757575;
+  }
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  width: 30px;
+  height: 30px;
+  padding: 0;
+
+  background: #f5f5f5;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: #d5d5d5;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.94);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.sendIcon {
+  width: 16px;
+  height: 16px;
+  color: #181a1e;
+}
+
+/* Mobile large */
+@media screen and (min-width: 480px) {
+  .wrapper {
+    padding: 0 16px;
+  }
+
+  .form {
+    padding: 9px 12px 9px 16px;
+    border-radius: 15px;
+  }
+
+  .field {
+    font-size: 13px;
+  }
+
+  .btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .sendIcon {
+    width: 17px;
+    height: 17px;
+  }
+}
+
+/* Tablet */
+@media screen and (min-width: 768px) {
+  .wrapper {
+    padding: 0 24px;
+  }
+
+  .form {
+    padding: 10px 12px 10px 18px;
+    border-radius: 16px;
+  }
+
+  .field {
+    font-size: 15кpx;
+  }
+
+  .btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+  }
+
+  .sendIcon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Desktop */
+@media screen and (min-width: 1020px) {
+  .wrapper {
+    padding: 0 32px;
+  }
+
+  .form {
+    padding: 12px 14px 12px 20px;
+    border-radius: 18px;
+  }
+
+  .field {
+    font-size: 16px;
+  }
+
+  .btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+
+  .sendIcon {
+    width: 19px;
+    height: 19px;
+  }
+}
