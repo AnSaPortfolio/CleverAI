@@ -64,3 +64,60 @@ export async function deleteChat(
 
   if (error) throw error;
 }
+
+export async function getChat(
+  accessToken: string,
+  chatId: string
+) {
+  const db = createUserSupabase(accessToken);
+
+  const { data, error } = await db
+    .from("chats")
+    .select("id, title")
+    .eq("id", chatId)
+    .maybeSingle();
+
+  if (error) throw error;
+
+  return data;
+}
+
+export async function saveMessages(
+  accessToken: string,
+  chatId: string,
+  message: string,
+  answer: string
+) {
+  const db = createUserSupabase(accessToken);
+
+  const { error } = await db.from("messages").insert([
+    {
+      chat_id: chatId,
+      role: "user",
+      content: message,
+    },
+    {
+      chat_id: chatId,
+      role: "assistant",
+      content: answer,
+    },
+  ]);
+if (error) {
+  console.error("Messages insert failed:", {
+    code: error.code,
+    message: error.message,
+    details: error.details,
+    hint: error.hint,
+  });
+
+  throw error;
+}
+
+console.log("Messages saved for chat:", chatId);
+  const { error: updateError } = await db
+    .from("chats")
+    .update({ updated_at: new Date().toISOString() })
+    .eq("id", chatId);
+
+  if (updateError) throw updateError;
+}

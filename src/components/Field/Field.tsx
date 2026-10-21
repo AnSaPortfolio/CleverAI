@@ -1,42 +1,72 @@
 import { useState, type FormEvent } from "react";
-import s from "./Field.module.css";
+import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate, useParams } from "react-router-dom";
 import { Send } from "lucide-react";
-import { useSendMessage } from "../../hooks/answer";
+import { useSendMessage } from "../../hooks/chat";
+import s from "./Field.module.css";
 
 export function Field() {
-  const [answerValue, setAnswerValue] = useState("");
-  const { mutate, isPending, error, isError } = useSendMessage()
+  const [question, setQuestion] = useState("");
+  const { chatId } = useParams<{ chatId: string }>();
+  const sendMessage = useSendMessage();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-   mutate(answerValue)
+    const message = question.trim();
 
-    setAnswerValue("");
+    if (!message || sendMessage.isPending) return;
+
+    sendMessage.mutate(
+      { message, chatId },
+      {
+        onSuccess: (data) => {
+          setQuestion("");
+
+          queryClient.invalidateQueries({
+            queryKey: ["messages", data.chatId],
+          });
+
+          queryClient.invalidateQueries({
+            queryKey: ["chats"],
+          });
+
+          if (!chatId) {
+            navigate(`/chats/${data.chatId}`);
+          }
+        },
+      },
+    );
   }
-
-  function handleChange(text: string) {
-    setAnswerValue(text);
-  }
-
-  if(isPending) return <p>СleverAI is thinking...</p>
-  if(isError) return <p>{error.message}</p>
 
   return (
     <div className="container">
       <div className={s.wrapper}>
-        <form className={s.form} onSubmit={(e) => handleSubmit(e)}>
+        <form className={s.form} onSubmit={handleSubmit}>
           <input
             type="text"
             className={s.field}
-            onChange={(e) => handleChange(e.target.value)}
-            value={answerValue}
+            onChange={(e) => setQuestion(e.target.value)}
+            value={question}
             placeholder="Ask CleverAI"
+            disabled={sendMessage.isPending}
+            maxLength={10000}
           />
-          <button className={s.btn} disabled={!answerValue.trim()}>
+
+          <button
+            type="submit"
+            className={s.btn}
+            disabled={!question.trim() || sendMessage.isPending}
+          >
             <Send className={s.sendIcon} />
           </button>
         </form>
+
+        {sendMessage.isPending && <p>CleverAI is thinking...</p>}
+
+        {sendMessage.isError && <p role="alert">{sendMessage.error.message}</p>}
       </div>
     </div>
   );
