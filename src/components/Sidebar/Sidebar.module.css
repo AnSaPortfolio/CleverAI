@@ -1,0 +1,41 @@
+.sidebar {
+  width: 260px;
+  height: 100vh;
+  background: #fff;
+  border-right: 1px solid rgb(230, 230, 230);
+  display: none;
+}
+
+.open {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 50px;
+}
+
+.newChatBtn {
+  padding: 10px 20px;
+  background-color: #5662f6;
+  border: none;
+  color: #fff;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: 80%;
+  margin: 0 auto;
+  text-decoration: none;
+}
+
+@media (max-width: 767px) {
+  .sidebar {
+    position: fixed;
+    inset: 0;
+    width: 280px;
+    height: 100dvh;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+  }
+}

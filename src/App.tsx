@@ -6,14 +6,12 @@ import { Auth } from "./pages/Auth/AuthPage";
 import { useUserStore, type UserState } from "./zustand/user";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Chat } from "./pages/Chat/Chat";
-import { Chats } from "./components/Chats/Chats";
+import { ChatLayout } from "./components/ChatLayout/ChatLayout";
 
 const queryClient = new QueryClient();
 
 function App() {
-  const isLoggedIn = useUserStore(
-    (state: UserState) => state.isLoggedIn
-  );
+  const isLoggedIn = useUserStore((state: UserState) => state.isLoggedIn);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -21,17 +19,19 @@ function App() {
 
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Field />} />
-          <Route path="/chats" element={<Chats />} />
-          <Route
-            path="/chats/:chatId"
-            element={
-              <>
-                <Chat />
-                <Field />
-              </>
-            }
-          />
+          <Route element={<ChatLayout />}>
+            <Route index element={<Field />} />
+
+            <Route
+              path="chats/:chatId"
+              element={
+                <>
+                  <Chat />
+                  <Field />
+                </>
+              }
+            />
+          </Route>
         </Routes>
       </BrowserRouter>
 
