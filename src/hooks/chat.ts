@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api/axios";
 
 type SendMessageInput = {
@@ -21,6 +21,11 @@ type Message = {
   created_at: string;
 };
 
+type EditTitleInput = {
+  chatId: string;
+  title: string;
+};
+
 export function useSendMessage() {
   return useMutation({
     mutationFn: async (input: SendMessageInput) => {
@@ -38,5 +43,42 @@ export function useMessages(chatId: string) {
       const { data } = await api.get<Message[]>(`/chats/${chatId}/messages`);
       return data;
     },
+  });
+}
+
+export function useDeleteChat() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (chatId: string) => api.delete(`/chats/${chatId}`),
+
+    onSuccess: (_, chatId) => {
+      queryClient.invalidateQueries({
+        queryKey: ["chats"],
+      });
+
+      queryClient.removeQueries({
+        queryKey: ["messages", chatId],
+      });
+    },
+  });
+}
+
+export function useEditChatTitle() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ chatId, title }: EditTitleInput) => {
+      const { data } = await api.patch(`/chat/${chatId}/title`, {
+        title: title,
+      });
+      
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["chats"]
+      })
+    }
   });
 }

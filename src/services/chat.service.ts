@@ -4,10 +4,10 @@ const ai = new GoogleGenAI({});
 
 export async function sendMessage(text: string) {
     const response = await ai.interactions.create({
-        model: "gemini-3.8-flash",
+        model: "gemini-3.6-flash",
         input: text,
         generation_config: {
-            thinking_level: "medium"
+            thinking_level: "low"
         }
     })
 

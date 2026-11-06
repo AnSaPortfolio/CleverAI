@@ -130,10 +130,7 @@
   .form {
     padding: 10px 12px 10px 18px;
     border-radius: 16px;
-  }
-
-  .field {
-    font-size: 15кpx;
+      width: 80%;
   }
 
   .btn {

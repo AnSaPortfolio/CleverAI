@@ -46,6 +46,30 @@
   height: 15px;
 }
 
+.deleteBtn,
+.editBtn {
+   border: none;
+   background: none;
+}
+
+.deleteIcon,
+.editIcon {
+  transition-duration: 200ms;
+  transition-timing-function: ease;
+  transition-property: color ;
+  color: rgb(183, 183, 183);
+  stroke-width: 1.5px;
+  width: 20px;
+  height: 20px;
+}
+
+.deleteIcon:hover {  color: red;
+}
+
+/* .editIcon:hover {
+  color: ;
+}  */
+
 @media screen and (min-width: 768px) {
   .link {
       font-size: 14px;

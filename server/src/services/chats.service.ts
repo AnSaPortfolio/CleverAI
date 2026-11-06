@@ -57,12 +57,19 @@ export async function deleteChat(
 ) {
   const db = createUserSupabase(accessToken);
 
-  const { error } = await db
+  const { error: messagesError } = await db
+    .from("messages")
+    .delete()
+    .eq("chat_id", chatId);
+
+  if (messagesError) throw messagesError;
+
+  const { error: chatError } = await db
     .from("chats")
     .delete()
     .eq("id", chatId);
 
-  if (error) throw error;
+  if (chatError) throw chatError;
 }
 
 export async function getChat(
@@ -120,4 +127,32 @@ console.log("Messages saved for chat:", chatId);
     .eq("id", chatId);
 
   if (updateError) throw updateError;
+}
+
+export async function editTitle(
+  accessToken: string,
+  chatId: string,
+  title: string
+) {
+  const db = createUserSupabase(accessToken);
+
+  const trimmedTitle = title.trim();
+
+  if (!trimmedTitle) {
+    throw new Error("Chat title cannot be empty");
+  }
+
+  const { data, error } = await db
+    .from("chats")
+    .update({
+      title: trimmedTitle,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", chatId)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data;
 }

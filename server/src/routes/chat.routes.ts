@@ -3,6 +3,7 @@ import { requireAuth } from "../middleware/requireAuth.js";
 import { generateResponse } from "../services/gemini.service.js";
 import {
   createChat,
+  editTitle,
   getChat,
   getMessages,
   saveMessages,
@@ -100,6 +101,44 @@ await saveMessages(token, chat.id, text, result.answer);
       error: isRateLimit
         ? "AI rate limit exceeded" // якщо ліміт вичерпано
         : "Failed to process message",  
+    });
+  }
+});
+
+chatRouter.patch("/:chatId/title", requireAuth, async (req, res) => {
+  const { chatId } = req.params;
+  const { title } = req.body ?? {};
+
+  if (typeof chatId !== "string" || !UUID_PATTERN.test(chatId)) {
+    res.status(400).json({ error: "Invalid chat ID" });
+    return;
+  }
+
+  if (typeof title !== "string" || !title.trim()) {
+    res.status(400).json({ error: "Title is required" });
+    return;
+  }
+
+  if (title.trim().length > 100) {
+    res.status(400).json({ error: "Title is too long" });
+    return;
+  }
+
+  try {
+    const token = req.headers.authorization!.slice(7);
+
+    const updatedChat = await editTitle(
+      token,
+      chatId,
+      title
+    );
+
+    res.status(200).json(updatedChat);
+  } catch (error) {
+    console.error("Failed to update chat title:", error);
+
+    res.status(500).json({
+      error: "Failed to update chat title",
     });
   }
 });
