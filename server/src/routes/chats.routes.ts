@@ -7,9 +7,13 @@ import {
   createChat,
   getMessages,
   deleteChat,
+  updateChatPin,
 } from "../services/chats.service.js";
 
 export const chatsRouter = Router();
+
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 chatsRouter.use(requireAuth);
 
@@ -94,6 +98,58 @@ chatsRouter.delete("/:chatId", async (req, res) => {
     console.error(error);
     res.status(500).json({
       error: "Failed to delete chat",
+    });
+  }
+});
+
+chatsRouter.patch("/:chatId/pin", async (req, res) => {
+    console.log("PARAMS:", req.params);
+  console.log("CHAT ID:", req.params.chatId);
+  console.log("VALID:", UUID_PATTERN.test(String(req.params.chatId)));
+  const { chatId } = req.params;
+  const { isPinned } = req.body ?? {};
+
+  if (
+    typeof chatId !== "string" ||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(chatId)
+  ) {
+    res.status(400).json({
+      error: "Invalid chat ID",
+    });
+    return;
+  }
+
+  if (typeof isPinned !== "boolean") {
+    res.status(400).json({
+      error: "isPinned must be a boolean",
+    });
+    return;
+  }
+
+  try {
+    const token = req.headers.authorization!.slice(7);
+    const userId = res.locals.user.id;
+
+    const chat = await updateChatPin(
+      token,
+      chatId,
+      userId,
+      isPinned
+    ); 
+
+    if (!chat) {
+      res.status(404).json({
+        error: "Chat not found",
+      });
+      return;
+    }
+
+    res.status(200).json(chat);
+  } catch (error) {
+    console.error("Failed to update chat pin:", error);
+
+    res.status(500).json({
+      error: "Failed to update chat pin",
     });
   }
 });

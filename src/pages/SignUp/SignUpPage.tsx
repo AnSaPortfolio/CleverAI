@@ -1,56 +1,68 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useSignUp } from "../../hooks/auth";
 import { toast } from "sonner";
+import s from "../Login/Login.module.css"
 
 export function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-//   const { mutate: mutateSignIn } = useSignIn();
-  const { mutate, isPending, isError, isSuccess, error } = useSignUp();
+  const { mutate, isPending, isError, isSuccess, error } =
+    useSignUp();
 
-  function handleChangeEmail(email: string) {
-    setEmail(email);
-  }
-
-  function handleChangePassword(password: string) {
-    setPassword(password);
-  }
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Successfully signed up!");
+    }
+  }, [isSuccess]);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-
-    mutate({
-      email,
-      password,
-    });
+    mutate({ email, password });
   }
 
-  if(isError) return <p>{error.message}</p>
-  if(isPending) return <p>Signing up.....</p>
-  if(isSuccess) return toast.success("Successfull signed up!")
-
   return (
-    <form onSubmit={(e) => handleSubmit(e)}>
-      <label>
-        Email address
+    <form className={s.form} onSubmit={handleSubmit}>
+      <label className={s.field}>
+        <span className={s.label}>Email address</span>
+
         <input
+          className={s.input}
           type="email"
           value={email}
-          onChange={(e) => handleChangeEmail(e.target.value)}
-          placeholder="thomashartman@example.com"
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@example.com"
+          required
         />
       </label>
-      <label>
-        Password
+
+      <label className={s.field}>
+        <span className={s.label}>Password</span>
+
         <input
+          className={s.input}
           type="password"
           value={password}
-          onChange={(e) => handleChangePassword(e.target.value)}
-          placeholder="Enter your password"
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Create a password"
+          minLength={6}
+          required
         />
       </label>
-      <button>Sign Up</button>
+
+      {isError && (
+        <p className={s.error} role="alert">
+          {error.message}
+        </p>
+      )}
+
+      <button
+        className={s.submitBtn}
+        type="submit"
+        disabled={isPending}
+      >
+        {isPending ? "Creating account..." : "Create account"}
+      </button>
     </form>
   );
 }

@@ -3,15 +3,14 @@ import "./App.css";
 import { Field } from "./components/Field/Field";
 import { Toaster } from "sonner";
 import { Auth } from "./pages/Auth/AuthPage";
-import { useUserStore, type UserState } from "./zustand/user";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Chat } from "./pages/Chat/Chat";
 import { ChatLayout } from "./components/ChatLayout/ChatLayout";
+import { UserProfile } from "./components/UserProfile/UserProfile";
 
 const queryClient = new QueryClient();
 
 function App() {
-  const isLoggedIn = useUserStore((state: UserState) => state.isLoggedIn);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -21,6 +20,7 @@ function App() {
         <Routes>
           <Route element={<ChatLayout />}>
             <Route index element={<Field />} />
+            <Route path="/login" element={<Auth />} />
 
             <Route
               path="chats/:chatId"
@@ -35,7 +35,8 @@ function App() {
         </Routes>
       </BrowserRouter>
 
-      {isLoggedIn && <Auth />}
+   <UserProfile />
+
     </QueryClientProvider>
   );
 }

@@ -4,32 +4,74 @@ import { SignUp } from "../SignUp/SignUpPage";
 import { useUserStore } from "../../zustand/user";
 import type { UserState } from "../../zustand/user";
 import { useSignOut } from "../../hooks/auth";
+import s from "./Auth.module.css";
 
 type Mode = "Login" | "Sign Up";
 
 export function Auth() {
   const [mode, setMode] = useState<Mode>("Sign Up");
-  const isLoggedIn = useUserStore((state: UserState) => state.isLoggedIn);
-  const { mutate, isPending, isError, error } = useSignOut();
+
+  const isLoggedIn = useUserStore(
+    (state: UserState) => state.isLoggedIn
+  );
+
+  const { mutate, isPending } = useSignOut();
 
   function toggleMode() {
-    setMode((prev) => (prev === "Login" ? "Sign Up" : "Login"));
+    setMode((prev) =>
+      prev === "Login" ? "Sign Up" : "Login"
+    );
   }
 
-  if (isError) return <p>{error.message}</p>;
-  if (isPending) return <p>Signing out...</p>;
+  const isLogin = mode === "Login";
 
   return (
-    <>
-      {mode === "Login" ? <Login /> : <SignUp />}
-      
-      <button onClick={toggleMode}>
-        {mode === "Login" ? "Sign Up" : "Login"}
-      </button>
-      
-      {isLoggedIn && (
-        <button onClick={() => mutate()}>Sign Out</button>
-      )}
-    </>
+    <main className={s.authPage}>
+      {isLoggedIn && <p>You are logged in </p>}
+      <div className={s.authCard}>
+        <div className={s.authHeader}>
+          <div className={s.logo}>C</div>
+
+          <h1 className={s.title}>
+            {isLogin ? "Welcome back" : "Welcome to CleverAI"}
+          </h1>
+
+          <p className={s.subtitle}>
+            {isLogin
+              ? "Log in to continue your conversations"
+              : "Create an account to get started"}
+          </p>
+        </div>
+
+        {isLogin ? <Login /> : <SignUp />}
+
+        <div className={s.switchContainer}>
+          <span className={s.switchText}>
+            {isLogin
+              ? "Don't have an account?"
+              : "Already have an account?"}
+          </span>
+
+          <button
+            type="button"
+            className={s.switchBtn}
+            onClick={toggleMode}
+          >
+            {isLogin ? "Sign up" : "Log in"}
+          </button>
+        </div>
+
+        {isLoggedIn && (
+          <button
+            type="button"
+            className={s.signOutBtn}
+            onClick={() => mutate()}
+            disabled={isPending}
+          >
+            {isPending ? "Signing out..." : "Sign Out"}
+          </button>
+        )}
+      </div>
+    </main>
   );
 }

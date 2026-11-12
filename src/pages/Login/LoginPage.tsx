@@ -1,6 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { useSignIn } from "../../hooks/auth";
 import { toast } from "sonner";
+import { useEffect } from "react";
+import s from "./Login.module.css";
+import { useUserStore, type UserState } from "../../zustand/user";
 
 export function Login() {
   const [email, setEmail] = useState("");
@@ -8,48 +11,57 @@ export function Login() {
 
   const { mutate, isPending, isError, isSuccess, error } = useSignIn();
 
-  function handleChangeEmail(email: string) {
-    setEmail(email);
-  }
+  const login = useUserStore((state: UserState) => state.login);
 
-  function handleChangePassword(password: string) {
-    setPassword(password);
-  }
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Successfully logged in!");
+          login();
+    }
+  }, [isSuccess, login]);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-
-    mutate({
-      email,
-      password,
-    });
+    mutate({ email, password });
   }
 
-  if (isError) return <p>{error.message}</p>;
-  if (isPending) return <p>Loging in.....</p>;
-  if (isSuccess) return toast.success("Successfull logged in!");
-
   return (
-    <form onSubmit={(e) => handleSubmit(e)}>
-      <label>
-        Email address
+    <form className={s.form} onSubmit={handleSubmit}>
+      <label className={s.field}>
+        <span className={s.label}>Email address</span>
+
         <input
+          className={s.input}
           type="email"
           value={email}
-          onChange={(e) => handleChangeEmail(e.target.value)}
-          placeholder="thomashartman@example.com"
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@example.com"
+          required
         />
       </label>
-      <label>
-        Password
+
+      <label className={s.field}>
+        <span className={s.label}>Password</span>
+
         <input
+          className={s.input}
           type="password"
           value={password}
-          onChange={(e) => handleChangePassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           placeholder="Enter your password"
+          required
         />
       </label>
-      <button>Sign Up</button>
+
+      {isError && (
+        <p className={s.error} role="alert">
+          {error.message}
+        </p>
+      )}
+
+      <button className={s.submitBtn} type="submit" disabled={isPending}>
+        {isPending ? "Logging in..." : "Log in"}
+      </button>
     </form>
   );
 }

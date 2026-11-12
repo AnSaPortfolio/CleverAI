@@ -89,20 +89,23 @@ await saveMessages(token, chat.id, text, result.answer);
       interactionId: result.interactionId,
     });
   } catch (error) {
-    console.error("Chat request failed:", error);
+  console.error("Chat request failed:", error);
 
-    const isRateLimit =
-      typeof error === "object" &&
-      error !== null &&
-      "status" in error &&
-      Number(error.status) === 429;
-
-    res.status(isRateLimit ? 429 : 500).json({
-      error: isRateLimit
-        ? "AI rate limit exceeded" // якщо ліміт вичерпано
-        : "Failed to process message",  
+  if (
+    error instanceof Error &&
+    "status" in error &&
+    error.status === 503
+  ) {
+    res.status(503).json({
+      error: "AI is temporarily overloaded. Please try again in 30 seconds.",
     });
+    return;
   }
+
+  res.status(500).json({
+    error: "Failed to generate AI response",
+  });
+}
 });
 
 chatRouter.patch("/:chatId/title", requireAuth, async (req, res) => {

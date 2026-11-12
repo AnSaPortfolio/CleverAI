@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export type UserState = {
-  // name: null | string;
+  // email: null | string;
   isLoggedIn: boolean;
 
   login: () => void;
@@ -9,7 +9,7 @@ export type UserState = {
 };
 
 export const useUserStore = create<UserState>((set) => ({
-  name: null,
+  // email: null,
   isLoggedIn: false,
 
   login: () => {

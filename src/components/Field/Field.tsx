@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Send } from "lucide-react";
 import { useSendMessage } from "../../hooks/chat";
 import s from "./Field.module.css";
+import { toast } from "sonner";
 
 export function Field() {
   const [question, setQuestion] = useState("");
@@ -37,6 +38,9 @@ export function Field() {
             navigate(`/chats/${data.chatId}`);
           }
         },
+        onError: (error) => {
+          toast.error(error.message)
+        }
       },
     );
   }

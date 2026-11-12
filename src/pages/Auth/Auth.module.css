@@ -1,0 +1,155 @@
+.authPage {
+  min-height: 100dvh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 20px;
+  background-color: #f7f8fc;
+}
+
+.authCard {
+  width: 100%;
+  max-width: 440px;
+  background-color: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 12px 40px rgba(25, 35, 90, 0.05);
+}
+
+.authHeader {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.logo {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 20px;
+  background-color: #5662f6;
+  color: #fff;
+  border-radius: 14px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.title {
+  margin: 0 0 8px;
+  font-size: 26px;
+  font-weight: 700;
+  color: #202337;
+  letter-spacing: -0.7px;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: #85899a;
+  line-height: 1.6;
+}
+
+.switchContainer {
+  margin-top: 26px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.switchText {
+  font-size: 14px;
+  color: #85899a;
+}
+
+.switchBtn {
+  padding: 4px;
+  background: transparent;
+  border: none;
+  color: #5662f6;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.switchBtn:hover {
+  color: #3e49db;
+  text-decoration: underline;
+}
+
+.signOutBtn {
+  display: block;
+  margin: 20px auto 0;
+  padding: 8px 16px;
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  background: #fff;
+  color: #666;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.signOutBtn:hover {
+  background: #f7f8fc;
+}
+
+.error {
+  color: #e5484d;
+  font-size: 13px;
+  margin-top: 12px;
+  text-align: center;
+}
+
+/* Tablet */
+@media (max-width: 767px) {
+  .authPage {
+    padding: 24px 16px;
+  }
+
+  .authCard {
+    max-width: 420px;
+    padding: 32px 26px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .authPage {
+    padding: 20px 14px;
+  }
+
+  .authCard {
+    padding: 28px 22px;
+    border-radius: 16px;
+  }
+
+  .authHeader {
+    margin-bottom: 26px;
+  }
+
+  .logo {
+    width: 46px;
+    height: 46px;
+    font-size: 21px;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  .switchContainer {
+    margin-top: 22px;
+  }
+}

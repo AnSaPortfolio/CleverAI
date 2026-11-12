@@ -6,8 +6,8 @@ export async function getChats(accessToken: string) {
   const { data, error } = await db
     .from("chats")
     .select("*")
-    .order("updated_at", { ascending: false });
-
+    .order("is_pinned", { ascending: false })
+.order("updated_at", { ascending: false })
   if (error) throw error;
 
   return data;
@@ -153,6 +153,29 @@ export async function editTitle(
     .single();
 
   if (error) throw error;
+
+  return data;
+}
+
+export async function updateChatPin(
+  token: string,
+  chatId: string,
+  userId: string,
+  isPinned: boolean
+) {
+  const db = createUserSupabase(token);
+
+  const { data, error } = await db
+    .from("chats")
+    .update({ is_pinned: isPinned })
+    .eq("id", chatId)
+    .eq("user_id", userId)
+    .select()
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
 
   return data;
 }

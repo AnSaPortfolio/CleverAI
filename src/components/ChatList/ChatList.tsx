@@ -1,9 +1,10 @@
-import { useChats, type Chat } from "../../hooks/chats";
+import { useChats, usePinChat, type Chat } from "../../hooks/chats";
 import { NavLink } from "react-router-dom";
 import s from "./ChatList.module.css";
-import { MessageCircleMore, SquarePen, Trash } from "lucide-react";
+import { MessageCircleMore, Pin, SquarePen, Trash } from "lucide-react";
 import { useDeleteChat, useEditChatTitle } from "../../hooks/chat";
 import { useState } from "react";
+// import Swal from "sweetalert2";
 
 export function ChatList() {
   const [editingId, setEditingId] = useState<null | string>(null);
@@ -20,6 +21,8 @@ export function ChatList() {
 
   const { mutate: editChatTitle, isPending: isEditPending } =
     useEditChatTitle();
+
+  const { mutate: pinChat, isPending: isChatPinPending } = usePinChat();
 
   if (isError) return <p>{error.message}</p>;
   if (isPending) return <p>Loading...</p>;
@@ -48,6 +51,26 @@ export function ChatList() {
     setEditingId(null);
     setNewTitle("");
   }
+
+  async function handlePinChatClcik(chat: Chat) {
+  //   const result = await Swal.fire({
+  //   title: `Are you sure you want to ${chat.is_pinned ? "unpin" : "pin"} this chat?`,
+  //   text: "This action cannot be undone.",
+  //   icon: "question",
+  //   showCancelButton: true,
+  //   confirmButtonText: `${chat.is_pinned ? "Unpin" : "Pin"} this chat`,
+  //   cancelButtonText: "Cancel",
+  //   confirmButtonColor: "#06b800",
+  // });
+
+  // if(result.isConfirmed) {
+
+pinChat({
+      chatId: chat.id,
+      isPinned: !chat.is_pinned,
+    })    
+  // }
+}
 
   return (
     <nav>
@@ -88,6 +111,16 @@ export function ChatList() {
                 onClick={() => handleEditClick(chat)}
               />
             </button>
+            <button type="button" className={s.pinChatBtn}>
+              <Pin
+                size={16}
+                strokeWidth={1.5}
+                className={s.pinChatIcon}
+                onClick={() => handlePinChatClcik(chat)}
+              />
+            </button>
+            {isChatPinPending && <p>Pinning chat...</p>}
+
             {isDeletePending && deletingChatId === chat.id && (
               <p>Deleting chat...</p>
             )}
