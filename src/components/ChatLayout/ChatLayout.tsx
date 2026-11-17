@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
-import { SidebarClose, SidebarOpen } from "lucide-react";
+import { SidebarOpen } from "lucide-react";
 import { Sidebar } from "../Sidebar/Sidebar";
 import s from "./ChatLayout.module.css";
 
@@ -21,7 +21,7 @@ export function ChatLayout() {
   return () => window.removeEventListener("resize", handleResize);
 }, []);
 
-  return (
+    return (
     <div className={s.layout}>
       <Sidebar
         isOpen={isSidebarOpen}
@@ -29,23 +29,14 @@ export function ChatLayout() {
       />
 
       <main className={s.main}>
-        {!isSidebarOpen ? (
+        {!isSidebarOpen && (
           <button
             type="button"
             onClick={() => setIsSidebarOpen(true)}
             aria-controls="sidebar"
             className={s.sidebarIcon}
           >
-            <SidebarOpen />
-          </button>
-        ) : (
-           <button
-            type="button"
-            onClick={() => setIsSidebarOpen(false)}
-            aria-controls="sidebar"
-            className={s.sidebarIcon}
-          >
-            <SidebarClose />
+            <SidebarOpen color="black" />
           </button>
         )}
 
@@ -53,4 +44,5 @@ export function ChatLayout() {
       </main>
     </div>
   );
+
 }

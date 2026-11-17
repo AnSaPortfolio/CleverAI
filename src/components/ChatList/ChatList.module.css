@@ -1,79 +1,214 @@
-.list { 
-  display: flex; 
-  flex-direction: column; 
-  align-items: center; 
-  justify-content: center; 
-  gap: 15px; 
+.nav {
+  width: 100%;
+  padding: 0 12px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   list-style: none;
   padding: 0;
-  margin: 0; 
-} 
+  margin: 0;
+}
 
 .item {
-  width: 90%;
-  transition: background-color 0.2s ease, border-radius 0.2s ease;
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  border-radius: 10px;
+  transition: background-color 0.15s ease, opacity 0.2s ease;
 }
 
-.item:hover, 
-.active {
-  border-radius: 10px; 
-  background-color: #f6f6ff; 
-} 
+.item:hover {
+  background-color: #f4f4f6;
+}
 
-.link { 
-  display: block;
-  color: #000; 
+.item.deleting {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  padding: 9px 10px;
+  border-radius: 10px;
+  color: #374151;
   text-decoration: none;
-  font-family: "Open Sans", sans-serif; 
-  padding: 8px; 
-  font-size: 12px;
+  font-family: "Open Sans", sans-serif;
+  font-size: 13px;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-.link:hover {
- color: #8089f7;
-}
-
-.link:focus-visible {
-  outline: 2px solid #fff;
-  border-radius: 15px;
+.link.active {
+  background-color: #eef0ff;
+  color: #5662f6;
+  font-weight: 500;
 }
 
 .icon {
+  flex-shrink: 0;
   width: 15px;
   height: 15px;
+  color: #9ca3af;
 }
 
-.deleteBtn,
-.editBtn,
-.pinChatBtn {
-   border: none;
-   background: none;
+.link.active .icon {
+  color: #5662f6;
 }
 
-.deleteIcon,
-.editIcon,
-.pinChatIcon {
-  transition-duration: 200ms;
-  transition-timing-function: ease;
-  transition-property: color ;
-  color: rgb(183, 183, 183);
-  stroke-width: 1.5px;
-  width: 20px;
-  height: 20px;
+.title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.deleteIcon:hover {  color: red;
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-right: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
 }
 
-/* .editIcon:hover {
-  color: ;
-}  */
+.item:hover .actions,
+.item:focus-within .actions {
+  opacity: 1;
+  pointer-events: auto;
+}
 
-@media screen and (min-width: 768px) {
-  .link {
-      font-size: 14px;
+.actions.hasPinned {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.actions.hasPinned .actionBtn:not(.pinnedActive) {
+  opacity: 0;
+}
+
+.item:hover .actions.hasPinned .actionBtn {
+  opacity: 1;
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  color: #8c929c;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.actionBtn:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+  color: #111827;
+}
+
+.deleteBtn:hover {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+.pinnedActive {
+  color: #5662f6;
+  transform: rotate(45deg);
+}
+
+.editForm {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 5px 8px;
+}
+
+.editInput {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 8px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #111827;
+  background: #fff;
+  border: 1px solid #5662f6;
+  border-radius: 6px;
+  outline: none;
+}
+
+.editActions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.saveBtn,
+.cancelBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.saveBtn {
+  color: #5662f6;
+}
+
+.saveBtn:hover:not(:disabled) {
+  background-color: #eef0ff;
+}
+
+.saveBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.cancelBtn {
+  color: #6b7280;
+}
+
+.cancelBtn:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.statusText {
+  text-align: center;
+  font-size: 12px;
+  color: #9ca3af;
+  margin: 12px 0;
+}
+
+.errorText {
+  font-size: 11px;
+  color: #ef4444;
+  padding: 0 10px 6px;
+  margin: 0;
+}
+
+@media (hover: none) {
+  .actions,
+  .actions.hasPinned .actionBtn:not(.pinnedActive) {
+    opacity: 1;
+    pointer-events: auto;
   }
 }

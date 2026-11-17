@@ -1,10 +1,9 @@
 import { useChats, usePinChat, type Chat } from "../../hooks/chats";
 import { NavLink } from "react-router-dom";
 import s from "./ChatList.module.css";
-import { MessageCircleMore, Pin, SquarePen, Trash } from "lucide-react";
+import { Check, MessageCircleMore, Pin, SquarePen, Trash, X } from "lucide-react";
 import { useDeleteChat, useEditChatTitle } from "../../hooks/chat";
 import { useState } from "react";
-// import Swal from "sweetalert2";
 
 export function ChatList() {
   const [editingId, setEditingId] = useState<null | string>(null);
@@ -22,15 +21,12 @@ export function ChatList() {
   const { mutate: editChatTitle, isPending: isEditPending } =
     useEditChatTitle();
 
-  const { mutate: pinChat, isPending: isChatPinPending } = usePinChat();
+  const { mutate: pinChat } = usePinChat();
 
-  if (isError) return <p>{error.message}</p>;
-  if (isPending) return <p>Loading...</p>;
+  if (isError) return <p className={s.statusText}>{error.message}</p>;
+  if (isPending) return <p className={s.statusText}>Loading...</p>;
 
   function handleEditClick(chat: Chat) {
-    if (editingId) {
-      setEditingId(null);
-    }
     setEditingId(chat.id);
     setNewTitle(chat.title);
   }
@@ -42,94 +38,120 @@ export function ChatList() {
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>, chatId: string) {
     e.preventDefault();
+    if (!newTitle.trim()) return;
 
     editChatTitle({
-      chatId: chatId,
-      title: newTitle,
+      chatId,
+      title: newTitle.trim(),
     });
 
     setEditingId(null);
     setNewTitle("");
   }
 
-  async function handlePinChatClcik(chat: Chat) {
-  //   const result = await Swal.fire({
-  //   title: `Are you sure you want to ${chat.is_pinned ? "unpin" : "pin"} this chat?`,
-  //   text: "This action cannot be undone.",
-  //   icon: "question",
-  //   showCancelButton: true,
-  //   confirmButtonText: `${chat.is_pinned ? "Unpin" : "Pin"} this chat`,
-  //   cancelButtonText: "Cancel",
-  //   confirmButtonColor: "#06b800",
-  // });
-
-  // if(result.isConfirmed) {
-
-pinChat({
+  function handlePinChatClick(chat: Chat) {
+    pinChat({
       chatId: chat.id,
       isPinned: !chat.is_pinned,
-    })    
-  // }
-}
+    });
+  }
 
   return (
-    <nav>
+    <nav className={s.nav}>
       <ul className={s.list}>
-        {chats.map((chat) => (
-          <li className={s.item} key={chat.id}>
-            {chat.id === editingId ? (
-              <form onSubmit={(e) => handleSubmit(e, chat.id)}>
-                <input
-                  type="text"
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                />
-                <button disabled={chat.title === newTitle}>Save</button>
-                <button onClick={cancelEditing}>Cancel</button>
-                {isEditPending && <p>Editing title...</p>}
-              </form>
-            ) : (
-              <NavLink
-                to={`/chats/${chat.id}`}
-                className={({ isActive }) =>
-                  isActive ? `${s.active} ${s.link}` : s.link
-                }
-              >
-                <MessageCircleMore className={s.icon} />
-                {chat.title}
-              </NavLink>
-            )}
-            <button type="button" className={s.deleteBtn}>
-              <Trash
-                className={s.deleteIcon}
-                onClick={() => deleteChat(chat.id)}
-              />
-            </button>
-            <button type="button" className={s.editBtn}>
-              <SquarePen
-                className={s.editIcon}
-                onClick={() => handleEditClick(chat)}
-              />
-            </button>
-            <button type="button" className={s.pinChatBtn}>
-              <Pin
-                size={16}
-                strokeWidth={1.5}
-                className={s.pinChatIcon}
-                onClick={() => handlePinChatClcik(chat)}
-              />
-            </button>
-            {isChatPinPending && <p>Pinning chat...</p>}
+        {chats.map((chat) => {
+          const isDeleting = isDeletePending && deletingChatId === chat.id;
 
-            {isDeletePending && deletingChatId === chat.id && (
-              <p>Deleting chat...</p>
-            )}
+          return (
+            <li
+              className={`${s.item} ${isDeleting ? s.deleting : ""}`}
+              key={chat.id}
+            >
+              {chat.id === editingId ? (
+                <form
+                  className={s.editForm}
+                  onSubmit={(e) => handleSubmit(e, chat.id)}
+                >
+                  <input
+                    type="text"
+                    className={s.editInput}
+                    value={newTitle}
+                    onChange={(e) => setNewTitle(e.target.value)}
+                    autoFocus
+                    disabled={isEditPending}
+                  />
+                  <div className={s.editActions}>
+                    <button
+                      type="submit"
+                      className={s.saveBtn}
+                      disabled={chat.title === newTitle || !newTitle.trim()}
+                      title="Save"
+                    >
+                      <Check size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      className={s.cancelBtn}
+                      onClick={cancelEditing}
+                      title="Cancel"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <>
+                  <NavLink
+                    to={`/chats/${chat.id}`}
+                    className={({ isActive }) =>
+                      isActive ? `${s.link} ${s.active}` : s.link
+                    }
+                  >
+                    <MessageCircleMore className={s.icon} />
+                    <span className={s.title}>{chat.title}</span>
+                  </NavLink>
 
-            {isDeleteError && deletingChatId === chat.id && (
-              <p>{deleteError.message}</p>
-            )}
-          </li>
-        ))}
+                  <div
+                    className={`${s.actions} ${
+                      chat.is_pinned ? s.hasPinned : ""
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      className={`${s.actionBtn} ${
+                        chat.is_pinned ? s.pinnedActive : ""
+                      }`}
+                      onClick={() => handlePinChatClick(chat)}
+                      title={chat.is_pinned ? "Unpin" : "Pin"}
+                    >
+                      <Pin size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      className={s.actionBtn}
+                      onClick={() => handleEditClick(chat)}
+                      title="Rename"
+                    >
+                      <SquarePen size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      className={`${s.actionBtn} ${s.deleteBtn}`}
+                      onClick={() => deleteChat(chat.id)}
+                      title="Delete"
+                    >
+                      <Trash size={14} />
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {isDeleteError && deletingChatId === chat.id && (
+                <p className={s.errorText}>{deleteError.message}</p>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </nav>
   );

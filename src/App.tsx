@@ -6,7 +6,6 @@ import { Auth } from "./pages/Auth/AuthPage";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Chat } from "./pages/Chat/Chat";
 import { ChatLayout } from "./components/ChatLayout/ChatLayout";
-import { UserProfile } from "./components/UserProfile/UserProfile";
 
 const queryClient = new QueryClient();
 
@@ -34,9 +33,6 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
-
-   <UserProfile />
-
     </QueryClientProvider>
   );
 }

@@ -5,6 +5,7 @@ import { Send } from "lucide-react";
 import { useSendMessage } from "../../hooks/chat";
 import s from "./Field.module.css";
 import { toast } from "sonner";
+import { Ring } from "../ring";
 
 export function Field() {
   const [question, setQuestion] = useState("");
@@ -17,8 +18,6 @@ export function Field() {
     e.preventDefault();
 
     const message = question.trim();
-
-    if (!message || sendMessage.isPending) return;
 
     sendMessage.mutate(
       { message, chatId },
@@ -39,15 +38,21 @@ export function Field() {
           }
         },
         onError: (error) => {
-          toast.error(error.message)
-        }
+          toast.error(error.message);
+        },
       },
     );
   }
 
   return (
-    <div className="container">
       <div className={s.wrapper}>
+        {sendMessage.isPending && (
+          <div className={s.pendingWrapper}>
+            <p className={s.generatingMessage}>Generating response...</p> 
+            <Ring width={20} />
+          </div>
+        )}
+        {sendMessage.isError && <p>{sendMessage.error.message}</p>}
         <form className={s.form} onSubmit={handleSubmit}>
           <input
             type="text"
@@ -68,10 +73,9 @@ export function Field() {
           </button>
         </form>
 
-        {sendMessage.isPending && <p>CleverAI is thinking...</p>}
-
-        {sendMessage.isError && <p role="alert">{sendMessage.error.message}</p>}
+        <p className={s.info}>
+         * CleverAI can make mistakes. Please verify important information. *
+        </p>
       </div>
-    </div>
   );
 }

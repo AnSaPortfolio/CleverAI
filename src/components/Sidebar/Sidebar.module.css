@@ -4,6 +4,8 @@
   background: #fff;
   border-right: 1px solid rgb(230, 230, 230);
   display: none;
+  position: relative;
+  z-index: 99999;
 }
 
 .open {
@@ -11,6 +13,25 @@
   flex-direction: column;
   gap: 20px;
   padding-top: 50px;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.closeBtn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .newChatBtn {
@@ -26,6 +47,13 @@
   width: 60%;
   margin: 0 auto;
   text-decoration: none;
+    margin-top: 20px;
+}
+
+.profile {
+  position: absolute;
+  bottom: 100px;
+  right: 10px;
 }
 
 @media (max-width: 767px) {
@@ -35,7 +63,6 @@
     width: 280px;
     height: 100dvh;
     overflow-y: auto;
-    z-index: 100;
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
   }
 }

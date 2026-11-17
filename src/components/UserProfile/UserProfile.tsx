@@ -7,7 +7,7 @@ export function UserProfile() {
 
   if (isError) return <p>{error.message}</p>;
   if (isPending) return <p>Fetching user session...</p>;
-  const email = session?.user.email?.slice(0, 1).toUpperCase();
+  const email = session?.user.email
 
   return (
     <div className={s.wrapper}>
